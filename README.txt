@@ -1,9 +1,8 @@
 gam.py written by Ben Autrey
 
-This is a Python implementation of an Additive Model found in chapter #3 of Simon Wood's Generalized Additive Models:
-An Introduction with R.
+This is a Python implementation of an Additive Model found in chapter #3 of Simon Wood's Generalized Additive Models: An Introduction with R.
 
-Although, this model appears to work as is, it is not truely an implementation of GAMs since I have not yet implemented all members of the exponential family of models, i.e. it is not "Generalized". This is a work in progress.
+This is not truely an implementation of GAMs since I have not yet implemented all members of the exponential family of models, i.e. it is not "Generalized". This is a work in progress.
 
 This implementation requires numpy, sklearn, and matplotlib.
 
