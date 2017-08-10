@@ -17,6 +17,8 @@ class AdditiveModel():
         self.lambdas = None
         self.S = None
         self.B = None
+        self.mins = None
+        self.maxes = None
         self.X_aug = None
         self.Y_aug = None
         self.lr = None
@@ -31,6 +33,19 @@ class AdditiveModel():
         
     def set_X(self,X):
         self.X = X
+        self.mins = {}
+        self.maxes = {}
+        number_of_rows,number_of_columns = self.X.shape
+        for j in xrange(number_of_columns):
+            self.mins[j] = []
+            self.maxes[j] = []
+            for i in xrange(number_of_rows):
+                x = self.X[i][j]
+                self.mins[j].append(x)
+                self.maxes[j].append(x)
+                
+            self.mins[j] = min(self.mins[j])
+            self.maxes[j] = max(self.maxes[j])
         
     def set_Y(self,Y):
         self.Y = Y
@@ -100,44 +115,59 @@ class AdditiveModel():
         plot.scatter(X,self.Y - all_predicted_Y[0:number_of_rows],color='blue',s=1.0)
         plot.show()
         
-    def predict(self,X,Y):
-        X_aug = self.build_X(X)
-        raw_predictions = []
-        predicted_Ys = []
-        number_of_rows = X_aug.shape[0] - self.B.shape[0]
-        number_of_columns = X.shape[1]
-        for i in xrange(number_of_columns):
-            coefficients = self.coefficients[i]
-            self.lr.coef_ = coefficients
-            raw_prediction = self.lr.predict(X_aug)
-            raw_predictions.append(raw_prediction)
+    #def predict(self,X,Y,include_plot=False):
+    #    X_aug = self.build_X(X)
+    #    raw_predictions = []
+    #    predicted_Ys = []
+    #    number_of_rows = X_aug.shape[0] - self.B.shape[0]
+    #    number_of_columns = X.shape[1]
+    #    for i in xrange(number_of_columns):
+    #        coefficients = self.coefficients[i]
+    #        self.lr.coef_ = coefficients
+    #        raw_prediction = self.lr.predict(X_aug)
+    #        raw_predictions.append(raw_prediction)
             
-        self.overall_mean = float(sum(self.Y[:,0])/len(self.Y[:,0]))
+    #    self.overall_mean = float(sum(self.Y[:,0])/len(self.Y[:,0]))
             
-        l = len(raw_predictions)
-        for i in xrange(l):
-            mean = self.means[i]
-            predicted_Y = raw_predictions[i] - mean + self.overall_mean
-            predicted_Ys.append(predicted_Y)
+    #    l = len(raw_predictions)
+    #    for i in xrange(l):
+    #        mean = self.means[i]
+    #        predicted_Y = raw_predictions[i] - mean + self.overall_mean
+    #        predicted_Ys.append(predicted_Y)
             
-        all_predicted_Y = copy(predicted_Ys[0])
-        for i in xrange(1,len(predicted_Ys)):
-            predicted_Y = predicted_Ys[i]
-            all_predicted_Y = all_predicted_Y + predicted_Y - self.overall_mean
             
-        errors = []
-        absolute_error = 0.0
-        number_of_rows = Y.shape[0] # NOTE: DO NOT USE all_predicted_Y!
-        for i in xrange(number_of_rows):
-            y_est = all_predicted_Y[i][0]
-            y_act = Y[i][0]
-            diff = y_act - y_est
-            errors.append(diff)
-            absolute_error = absolute_error + abs(diff)
+    #    if include_plot:
+    #        number_of_rows,number_of_columns = X.shape
+    #        for i in xrange(number_of_columns):
+    #            X_col = X[:,i]
+    #            X_name = self.X_names[i]
+    #            predicted_Y = self.predicted_Y[i]
+    #        
+    #            plot.xlabel(X_name)
+    #            plot.ylabel(self.Y_name)
+    #            plot.title('Variable '+str(i+1))
+    #            plot.scatter(X_col,Y,color='blue',s=0.5)
+    #            plot.scatter(X_col,predicted_Y[0:number_of_rows,0],color='orange',s=10.0)
+    #            plot.show()
+            
+    #    all_predicted_Y = copy(predicted_Ys[0])
+    #    for i in xrange(1,len(predicted_Ys)):
+    #        predicted_Y = predicted_Ys[i]
+    #        all_predicted_Y = all_predicted_Y + predicted_Y - self.overall_mean
+    #        
+    #    errors = []
+    #    absolute_error = 0.0
+    #    number_of_rows = Y.shape[0] # NOTE: DO NOT USE all_predicted_Y!
+    #    for i in xrange(number_of_rows):
+    #        y_est = all_predicted_Y[i][0]
+    #        y_act = Y[i][0]
+    #        diff = y_act - y_est
+    #        errors.append(diff)
+    #        absolute_error = absolute_error + abs(diff)
         
-        prediction = (predicted_Ys,all_predicted_Y,errors,absolute_error)
+    #    prediction = (predicted_Ys,all_predicted_Y,errors,absolute_error)
         
-        return prediction
+    #    return prediction
         
     def _generate_predictions(self):
         raw_predictions = []
@@ -262,6 +292,8 @@ class AdditiveModel():
         for j in xrange(number_of_columns):
             x_min = min(X[:,j])
             x_max = max(X[:,j])
+            #x_min = self.mins[j]
+            #x_max = self.maxes[j]
             
             for i in xrange(number_of_rows):
                 x = X[i][j]
