@@ -1,6 +1,6 @@
 gam.py written by Ben Autrey
 
-WARNING: All data in the domain X must be scaled between 0 and 1. This means that both training and test datasets must be scaled between 0 and 1 using the min and max across ALL data.
+WARNING: All data in the domain X must be scaled between 0 and 1. This means that both training and test datasets must be scaled between 0 and 1 using the min and max across ALL data, e.g. (x - x_min)/x_max.
 
 This is a Python implementation of an Additive Model found in chapter #3 of Simon Wood's Generalized Additive Models: An Introduction with R.
 
